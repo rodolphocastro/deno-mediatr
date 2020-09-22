@@ -1,7 +1,7 @@
 import { Rhum, dixtureFns } from "../deps.ts";
 import { OutRequest } from "../../src/request.ts";
 import { RequestHandler } from "../../src/handler.ts";
-import { DateRange, Person, commonsFactory } from "./commons.ts";
+import { DateRange, Person, commonsFactory, dateRangeKey } from "./commons.ts";
 
 Rhum.testPlan(
   "II. Handlers",
@@ -71,6 +71,50 @@ Rhum.testPlan(
           argumentoDuo: string;
         }
         let request: InterfaceRequest;
+
+        Rhum.beforeEach(() => {
+          request = {
+            argumentoUno: dixtureFns.Int(),
+            argumentoDuo: dixtureFns.NamedString<InterfaceRequest>(
+              "argumentoDuo",
+            ),
+          };
+        });
+
+        Rhum.testCase(
+          "1. Should be constructable on the fly",
+          async () => {
+            try {
+              const myHandler: RequestHandler<InterfaceRequest, DateRange> = {
+                handle: async () =>
+                  commonsFactory.build<DateRange>(dateRangeKey),
+              };
+              const result = await myHandler.handle(request);
+              Rhum.asserts.assert(result != null);
+            } catch (error) {
+              Rhum.asserts.fail(error);
+            }
+          },
+        );
+
+        Rhum.testCase(
+          "2. Should be constructable when implemented by a class",
+          async () => {
+            class AwesomeHandler
+              implements RequestHandler<InterfaceRequest, DateRange> {
+              async handle(_request: InterfaceRequest): Promise<DateRange> {
+                return commonsFactory.build<DateRange>(dateRangeKey);
+              }
+            }
+            try {
+              const subject = new AwesomeHandler();
+              const result = await subject.handle(request);
+              Rhum.asserts.assert(result != null);
+            } catch (error) {
+              Rhum.asserts.fail(error);
+            }
+          },
+        );
       },
     );
 

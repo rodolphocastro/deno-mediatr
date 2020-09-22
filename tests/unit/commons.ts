@@ -84,4 +84,4 @@ commonsFactory.addRuleSet(
   }),
 );
 
-export { commonsFactory };
+export { dateRangeKey, commonsFactory };
