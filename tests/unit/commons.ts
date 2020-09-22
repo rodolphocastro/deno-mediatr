@@ -19,6 +19,16 @@ export class Person {
     return this.name;
   }
 
+  // TODO: This shouldn't need to be public :(
+  public set Name(newName: string) {
+    this.name = newName;
+  }
+
+  // TODO: This shouldn't need to be public :(
+  public set Age(newAge: number) {
+    this.age = newAge;
+  }
+
   public get Age() {
     return this.age;
   }
