@@ -27,7 +27,7 @@ Rhum.testPlan(
           async () => {
             try {
               const myHandler: RequestHandler<ClassRequest, Person> = {
-                handle: async (h) => {
+                async handle(h) {
                   const result = commonsFactory.build(Person);
                   result.Rename(h.argumentoDuo);
                   return result;
@@ -44,8 +44,7 @@ Rhum.testPlan(
         Rhum.testCase(
           "2. Should be constructable when implemented by a class",
           async () => {
-            class AwesomeHandler
-              implements RequestHandler<ClassRequest, Person> {
+            class AwesomeHandler implements RequestHandler<ClassRequest> {
               async handle(request: ClassRequest): Promise<Person> {
                 const result = commonsFactory.build(Person);
                 result.Rename(request.argumentoDuo);
