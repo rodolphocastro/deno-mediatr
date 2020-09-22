@@ -1,5 +1,6 @@
 import { Rhum } from "../deps.ts";
 import { OutRequest } from "../../src/request.ts";
+import { DateRange, Person } from "./commons.ts";
 
 Rhum.testPlan(
   "I. Requests",
@@ -7,51 +8,6 @@ Rhum.testPlan(
     Rhum.testSuite(
       "1. OutRequest<T>",
       () => {
-        class Person {
-          constructor(
-            private name: string,
-            private age: number,
-            private isAlive: boolean,
-          ) {
-          }
-
-          public get Name() {
-            return this.name;
-          }
-
-          public get Age() {
-            return this.age;
-          }
-
-          public Rename(newName: string): Person {
-            if (newName == "") {
-              return this;
-            }
-            this.name = newName;
-            return this;
-          }
-
-          public Kill(): Person {
-            if (!this.isAlive) {
-              return this;
-            }
-            this.isAlive = false;
-            return this;
-          }
-
-          public AgeBy(by = 1): Person {
-            if (!this.isAlive) {
-              return this;
-            }
-            this.age += by;
-            return this;
-          }
-        }
-        interface DateRange {
-          starts: Date;
-          ends: Date;
-        }
-
         Rhum.testCase(
           "1. Should be constructable with a Class parameter",
           () => {
