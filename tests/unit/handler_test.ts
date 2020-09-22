@@ -44,7 +44,8 @@ Rhum.testPlan(
         Rhum.testCase(
           "2. Should be constructable when implemented by a class",
           async () => {
-            class AwesomeHandler implements RequestHandler<ClassRequest> {
+            class AwesomeHandler
+              implements RequestHandler<ClassRequest, Person> {
               async handle(request: ClassRequest): Promise<Person> {
                 const result = commonsFactory.build(Person);
                 result.Rename(request.argumentoDuo);
@@ -126,6 +127,49 @@ Rhum.testPlan(
           argumentoDuo: string;
         }
         let request: PrimitiveRequest;
+
+        Rhum.beforeEach(() => {
+          request = {
+            argumentoUno: dixtureFns.Int(),
+            argumentoDuo: dixtureFns.NamedString<PrimitiveRequest>(
+              "argumentoDuo",
+            ),
+          };
+        });
+
+        Rhum.testCase(
+          "1. Should be constructable on the fly",
+          async () => {
+            try {
+              const myHandler: RequestHandler<PrimitiveRequest, number> = {
+                handle: async (r) => r.argumentoUno,
+              };
+              const result = await myHandler.handle(request);
+              Rhum.asserts.assert(result === request.argumentoUno);
+            } catch (error) {
+              Rhum.asserts.fail(error);
+            }
+          },
+        );
+
+        Rhum.testCase(
+          "2. Should be constructable when implemented by a class",
+          async () => {
+            class AwesomeHandler
+              implements RequestHandler<PrimitiveRequest, number> {
+              async handle(request: PrimitiveRequest): Promise<number> {
+                return request.argumentoUno;
+              }
+            }
+            try {
+              const subject = new AwesomeHandler();
+              const result = await subject.handle(request);
+              Rhum.asserts.assert(result === request.argumentoUno);
+            } catch (error) {
+              Rhum.asserts.fail(error);
+            }
+          },
+        );
       },
     );
   },
