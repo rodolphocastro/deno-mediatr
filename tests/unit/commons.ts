@@ -1,8 +1,17 @@
+import {
+  DixtureFactory,
+  InterfaceRuleSet,
+  RuleSet,
+  dixtureFns,
+} from "../deps.ts";
+
+const commonsFactory = new DixtureFactory();
+
 export class Person {
   constructor(
-    private name: string,
-    private age: number,
-    private isAlive: boolean,
+    private name = "",
+    private age = 0,
+    private isAlive = false,
   ) {
   }
 
@@ -39,7 +48,30 @@ export class Person {
   }
 }
 
+const dateRangeKey = "IDRange";
 export interface DateRange {
   starts: Date;
   ends: Date;
 }
+
+commonsFactory.addRuleSet(
+  new InterfaceRuleSet<DateRange>(dateRangeKey, {
+    field: "starts",
+    resolve: dixtureFns.PastDate,
+  }, {
+    field: "ends",
+    resolve: dixtureFns.FutureDate,
+  }),
+);
+
+commonsFactory.addRuleSet(
+  new RuleSet(Person, {
+    field: "Name",
+    resolve: () => dixtureFns.NamedString<Person>("Name"),
+  }, {
+    field: "Age",
+    resolve: dixtureFns.Int,
+  }),
+);
+
+export { commonsFactory };
